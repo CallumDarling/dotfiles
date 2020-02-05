@@ -9,4 +9,5 @@ export PS1="[\[$(tput sgr0)\]\[\033[38;5;29m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\
 alias c="code"
 alias s='sudo $(history -p !!)'
 alias sbb='sudo "$BASH" -c "$(history -p !!)"'
-alias ls="ls -hN --color=auto --group-directories-first"alias dotfiles='/usr/bin/git --git-dir=/home/callum/.dotfiles/ --work-tree=/home/callum'
+alias ls="ls -hN --color=auto --group-directories-first"
+alias dotfiles='/usr/bin/git --git-dir=/home/callum/.dotfiles/ --work-tree=/home/callum'
