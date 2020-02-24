@@ -88,6 +88,7 @@ interval = 600
 [module/xwindow]
 type = internal/xwindow
 label = %title:0:0:...%
+label-maxlen = 130
 
 [module/xkeyboard]
 type = internal/xkeyboard
@@ -110,7 +111,7 @@ type = internal/fs
 interval = 25
 
 mount-0 = /
-;mount-1 = /home
+mount-1 = /home
 
 label-mounted = %{F#0a81f5}%mountpoint%%{F-}:  %free% 
 label-unmounted = %mountpoint% not mounted
