@@ -34,4 +34,3 @@ augroup END
 "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "match OverLength /\%81v.\+/
 :imap <C-BS> <C-W>
-set spell
