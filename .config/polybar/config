@@ -88,7 +88,7 @@ interval = 600
 [module/xwindow]
 type = internal/xwindow
 label = %title:0:0:...%
-label-maxlen = 130
+label-maxlen = 98
 
 [module/xkeyboard]
 type = internal/xkeyboard
