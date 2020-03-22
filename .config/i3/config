@@ -32,7 +32,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id dunst
 
 #hide_edge_borders both
-for_window [class="^.*"] border pixel 2
+for_window [class="^.*"] border pixel1 
 #gaps 
 gaps inner 0 #20 
 gaps outer 0 #5
