@@ -15,7 +15,7 @@ if dein#load_state('~/.cache/dein')
   endif
 
   "call dein#add("vim-pandoc/vim-pandoc")
-  call dein#add("vim-pandoc/vim-pandoc-syntax")
+  "call dein#add("vim-pandoc/vim-pandoc-syntax")
   call dein#add("godlygeek/tabular")
   call dein#add("plasticboy/vim-markdown")
   
@@ -31,6 +31,8 @@ augroup pandoc_syntax
     au! BufNewFile,BufFilePre,BufRead *.md set filetype=markdown.pandoc
 augroup END
 
-"highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-"match OverLength /\%81v.\+/
+autocmd Filetype rmd map <F5> :!echo<space>"require(rmarkdown);<space>render('<c-r>%')"<space>\|<space>R<space>--vanilla<enter>
+
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.\+/
 :imap <C-BS> <C-W>
