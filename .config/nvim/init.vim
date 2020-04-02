@@ -35,4 +35,7 @@ autocmd Filetype rmd map <F5> :!echo<space>"require(rmarkdown);<space>render('<c
 
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 match OverLength /\%81v.\+/
-:imap <C-BS> <C-W>
+
+:noremap! <C-BS> <C-w>
+:noremap! <C-h> <C-w>
+
