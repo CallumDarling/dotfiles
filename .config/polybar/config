@@ -17,7 +17,7 @@
 ;==========================================================
 
 [colors]
-;background = ${xrdb:color0:#222}
+;background = ${rdb:color0:#222}
 background = #222
 background-alt = #444
 ;foreground = ${xrdb:color7:#222}
@@ -88,7 +88,8 @@ interval = 600
 [module/xwindow]
 type = internal/xwindow
 label = %title:0:0:...%
-label-maxlen = 98
+label-maxlen = 73
+
 
 [module/xkeyboard]
 type = internal/xkeyboard
@@ -114,7 +115,7 @@ mount-0 = /
 mount-1 = /home
 
 label-mounted = %{F#0a81f5}%mountpoint%%{F-}:  %free% 
-label-unmounted = %mountpoint% not mounted
+label-unmounted = %mountpoint% N/A
 label-unmounted-foreground = ${colors.foreground-alt}
 
 [module/bspwm]
