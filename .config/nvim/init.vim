@@ -31,6 +31,7 @@ let g:ctrlp_show_hidden = 1
 colorscheme material
 filetype plugin indent on
 syntax enable
+set nu
 set rnu
 autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
@@ -41,7 +42,9 @@ augroup END
 autocmd Filetype rmd map <F5> :!echo<space>"require(rmarkdown);<space>render('<c-r>%')"<space>\|<space>R<space>--vanilla<enter>
 "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "match OverLength /\%81v.\+/
-<Del>map <C-k> :NERDTreeToggle<CR>
-:noremap! <C-BS> <C-w>
-:noremap! <C-h> <C-w>
-
+map <C-k> :NERDTreeToggle<CR>
+noremap! <C-BS> <C-w>
+noremap! <C-h> <C-w>
+set tabstop=4
+set expandtab
+set shiftwidth=4
