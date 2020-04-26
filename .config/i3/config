@@ -201,6 +201,7 @@ exec_always picom
 exec ~/.fehbg
 exec "wal -R"
 exec_always --no-startup-id $HOME/Scripts/polystart
+exec --no-startup-id $HOME/Scripts/mousescript
 
 for_window [class="sfml-app"] floating enable
 for_window [class="SFML Application"] floating enable
