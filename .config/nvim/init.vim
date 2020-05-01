@@ -19,6 +19,7 @@ if dein#load_state('~/.cache/dein')
   "call dein#add("vim-pandoc/vim-pandoc-syntax")
   call dein#add("godlygeek/tabular")
   call dein#add("plasticboy/vim-markdown")
+  call dein#add("ferrine/md-img-paste.vim")
   call dein#add("kien/ctrlp.vim")
   
   call dein#end()
@@ -33,13 +34,12 @@ filetype plugin indent on
 syntax enable
 set nu
 set rnu
-autocmd vimenter * NERDTree
+"autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 augroup pandoc_syntax
     au! BufNewFile,BufFilePre,BufRead *.md set filetype=markdown.pandoc
 augroup END
-autocmd Filetype rmd map <F5> :!echo<space>"require(rmarkdown);<space>render('<c-r>%')"<space>\|<space>R<space>--vanilla<enter>
 "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "match OverLength /\%81v.\+/
 map <C-k> :NERDTreeToggle<CR>
@@ -48,3 +48,17 @@ noremap! <C-h> <C-w>
 set tabstop=4
 set expandtab
 set shiftwidth=4
+
+
+" RMD Shortcuts
+autocmd Filetype rmd map <F5> :!echo<space>"require(rmarkdown);<space>render('<c-r>%')"<space>\|<space>R<space>--vanilla<enter>
+autocmd FileType markdown nmap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<CR>
+autocmd FileType rmd inoremap ;box \noindent\fbox{\begin{minipage}{\textwidth}<enter><enter><enter><enter>\end{minipage}}<Up><Up>
+autocmd FileType rmd inoremap ;sig {\Sigma}
+autocmd FileType rmd inoremap ;vep {\varepsilon}
+autocmd FileType rmd inoremap ;ep {\epsilon}
+autocmd FileType rmd inoremap ;del {\delta}
+autocmd FileType rmd inoremap ;del {\delta}
+autocmd FileType rmd inoremap ;; $$<Left>
+autocmd FileType rmd inoremap ;ems {\emptyset}
+
