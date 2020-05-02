@@ -37,8 +37,8 @@ set rnu
 "autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-augroup pandoc_syntax
-    au! BufNewFile,BufFilePre,BufRead *.md set filetype=markdown.pandoc
+augroup markdown_syntax
+    au! BufNewFile,BufFilePre,BufRead *.rmd set filetype=markdown
 augroup END
 "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "match OverLength /\%81v.\+/
@@ -61,4 +61,7 @@ autocmd FileType rmd inoremap ;del {\delta}
 autocmd FileType rmd inoremap ;del {\delta}
 autocmd FileType rmd inoremap ;; $$<Left>
 autocmd FileType rmd inoremap ;ems {\emptyset}
-
+autocmd FileType rmd inoremap ;ra {\xrightarrow{}}<Left><Left>
+autocmd FileType rmd inoremap ;Ra {\Rightarrow^{}}<Left><Left>
+autocmd FileType rmd inoremap ;bu {\bullet}
+autocmd FileType rmd inoremap ;ems {\emptyset}
