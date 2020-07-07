@@ -16,3 +16,4 @@ alias ls="ls -hN --color=auto --group-directories-first"
 alias dotfiles='/usr/bin/git --git-dir=/home/callum/.dotfiles/ --work-tree=/home/callum'
 alias lock="i3lock-fancy -p"
 alias r="ranger"
+
