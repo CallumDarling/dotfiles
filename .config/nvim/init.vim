@@ -34,6 +34,10 @@ filetype plugin indent on
 syntax enable
 set nu
 set rnu
+set tabstop=4
+set expandtab
+set shiftwidth=4
+
 "autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
@@ -45,9 +49,6 @@ augroup END
 map <C-k> :NERDTreeToggle<CR>
 noremap! <C-BS> <C-w>
 noremap! <C-h> <C-w>
-set tabstop=4
-set expandtab
-set shiftwidth=4
 
 
 " RMD Shortcuts
