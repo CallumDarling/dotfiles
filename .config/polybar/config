@@ -31,7 +31,7 @@ alert = #bd2c40
 monitor = ${env:MONITOR:}
 bottom = true
 width = 100%
-height = 15
+height = 22
 ;offset-x = 1%
 ;offset-y = 1%
 radius = 0
@@ -49,16 +49,17 @@ border-color = #00000000
 padding-left = 0
 padding-right = 1
 
-module-margin-left = 2
-module-margin-right = 1;font-0 = fixed:pixelsize=10;1
+module-margin-left = 1
+module-margin-right = 1
+;font-0 = fixed:pixelsize=10;1
 font-0 = Noto Sans Mono:style=Regular:pixelsize=9;1
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = siji:pixelsize=10;1
-font-3 = MaterialIcons:size=13;1
+font-3 = MaterialIcons:size=17;5
 
-modules-left = i3 xwindow
-modules-center = mpd 
-modules-right = powermenu date
+modules-left = i3 sp xwindow 
+modules-center = 
+modules-right = memory cpu sp temperature filesystem sp xbacklight pulseaudio sp  eth wlan battery sp date
 
 tray-position = right
 tray-padding = 2
@@ -133,6 +134,15 @@ enable-ipc = true
 
 cursor-click = pointer
 cursor-scroll = ns-resize
+
+
+[module/sp]
+; grey to Blue
+type = custom/text
+content = "|"
+content-font = 5
+content-foreground = ${colors.foreground}
+content-background = ${colors.background}
 
 
 [module/updates-arch-combined]
@@ -351,8 +361,8 @@ format-disconnected =
 type = internal/date
 interval = 5
 
-date = %Y-%m-%d | 
-date-alt = " %Y-%m-%d"
+date = - %d/%m/%y 
+date-alt = " %d-%m-%Y"
 
 time = %H:%M
 time-alt = %H:%M:%S
@@ -363,7 +373,7 @@ format-prefix-foreground = ${colors.foreground-alt}
 ;format-underline = #0a6cf5
 
 ;label = %date% %time%
-label = %date% %time%
+label =  %time% %date%
 
 
 [module/pulseaudio]

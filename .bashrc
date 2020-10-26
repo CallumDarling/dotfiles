@@ -8,7 +8,9 @@ VISUAL=nvim; export VISUAL EDITOR=nvim; export EDITOR
 shopt -s autocd
 set -o vi
 export PS1="[\[$(tput sgr0)\]\[\033[38;5;29m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput sgr0)\]\[\033[38;5;29m\]\h\[$(tput sgr0)\]\[\033[38;5;15m\]] \W:>\[$(tput sgr0)\]"]
+export PATH="$PATH:~/Scripts"
 alias c="code"
+alias chromium="chromium --force-device-scale-factor=1.15"
 alias v="nvim"
 alias s='sudo $(history -p !!)'
 alias sbb='sudo "$BASH" -c "$(history -p !!)"'
