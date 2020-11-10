@@ -21,6 +21,7 @@
 
 ;; Org-mode
 
+(setq org-latex-packages-alist '(("margin=2cm" "geometry" nil)))
 (use-package org-bullets
   :ensure t
   :config
@@ -45,6 +46,23 @@ same directory as the org-buffer and insert a link to this file."
   (call-process "import" nil nil nil filename)
   (insert (concat "[[" filename "]]"))
   (org-display-inline-images))
+
+
+
+(defun fix-bkw ()
+  "Remove all whitespace if the character behind the cursor is whitespace, otherwise remove a word."
+  (interactive)
+  (if (looking-back "[ \n]")
+      ;; delete horizontal space before us and then check to see if we
+      ;; are looking at a newline
+      (progn (delete-horizontal-space 't)
+             (while (looking-back "[ \n]")
+               (backward-delete-char 1)))
+    ;; otherwise, just do the normal kill word.
+    (backward-kill-word 1)))
+
+(global-set-key [C-backspace] 'fix-bkw)
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
