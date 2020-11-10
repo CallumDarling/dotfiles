@@ -1,3 +1,11 @@
+  :PROPERTIES:
+  :header-args:    :tangle yes
+  :END:
+
+Emacs Config File
+
+* Use-Package
+#+BEGIN_SRC emacs-lisp
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
@@ -8,13 +16,26 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
+#+END_SRC
 
+* Aesthetics
+** Startup Tweaks
+
+#+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-message t)
 (setq package-enable-at-startup nil)
 (scroll-bar-mode -1)
+#+END_SRC
 
+** Theme and font
+
+#+BEGIN_SRC emacs-lisp
 (load-theme 'material t)
+#+END_SRC
 
+** Line Numbers
+
+#+BEGIN_SRC emacs-lisp
 (column-number-mode)
 
 ;; Enable line numbers for some modes
@@ -27,10 +48,22 @@
 (dolist (mode '(org-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+#+END_SRC
+
+** Doom Modeline
+
+#+BEGIN_SRC emacs-lisp
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 17)))
+
+#+END_SRC
+
+* General Packages
+
+** Ivy and Counsel
+#+BEGIN_SRC emacs-lisp
 
 (use-package ivy
   :ensure t
@@ -66,18 +99,39 @@
   :init
   (ivy-rich-mode 1))
 
+#+END_SRC
+
+** Which key 
+
+#+BEGIN_SRC emacs-lisp
 (use-package which-key
   :ensure t
   :config (which-key-mode))
+#+END_SRC
 
+** Rainbow Delimiters
+
+#+BEGIN_SRC emacs-lisp
 (use-package rainbow-delimiters
   :ensure t 
   :hook (prog-mode . rainbow-delimiters-mode))
+#+END_SRC
+
+* Org
+
+** Org bullets
+#+BEGIN_SRC emacs-lisp
 
 (use-package org-bullets
   :ensure t
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+#+END_SRC
+
+
+** Org Settings
+#+BEGIN_SRC emacs-lisp
 
 (setq org-latex-packages-alist '(("margin=2cm" "geometry" nil)))
 
@@ -87,7 +141,13 @@
 (setq org-babel-default-header-args
       (cons '(:tangle . "yes")
             (assq-delete-all :tangle org-babel-default-header-args)))
+#+END_SRC
 
+* Custom Functions
+
+** Add Screenshots to Org Files
+
+#+BEGIN_SRC emacs-lisp
 (defun my-org-scrot ()
   "Take a screenshot into a time stamped unique-named file in the
 same directory as the org-buffer and insert a link to this file."
@@ -106,6 +166,11 @@ same directory as the org-buffer and insert a link to this file."
   (call-process "import" nil nil nil filename)
   (insert (concat "[[" filename "]]"))
   (org-display-inline-images))
+#+END_SRC
+
+** Fix Control Backspace
+
+#+BEGIN_SRC emacs-lisp
 
 (defun fix-bkw ()
   "Remove all whitespace if the character behind the cursor is whitespace, otherwise remove a word."
@@ -121,6 +186,11 @@ same directory as the org-buffer and insert a link to this file."
 
 (global-set-key [C-backspace] 'fix-bkw)
 
+#+END_SRC
+
+* Custom Set variables
+
+#+BEGIN_SRC emacs-lisp
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -136,3 +206,10 @@ same directory as the org-buffer and insert a link to this file."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right. dsadcsa
  )
+#+END_SRC
+
+* Local Variables
+# Local Variables:
+# eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
+# End:
+
