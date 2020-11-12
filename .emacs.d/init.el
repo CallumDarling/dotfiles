@@ -167,7 +167,7 @@ same directory as the org-buffer and insert a link to this file."
 (global-set-key [C-backspace] 'fix-bkw)
 
 (custom-set-variables
- ;; custom-set-variables  was added by Custom.
+ ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
@@ -175,9 +175,8 @@ same directory as the org-buffer and insert a link to this file."
  '(package-selected-packages
    '(ivy-rich rainbow-delimiters doom-modeline ivy org-bullets which-key use-package try)))
 (custom-set-faces
-
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right. dsadcsa
+ ;; If there is more than one, they won't work right.
  )

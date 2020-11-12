@@ -59,7 +59,7 @@ font-3 = MaterialIcons:size=17;5
 
 modules-left = i3 sp xwindow 
 modules-center = 
-modules-right = memory cpu sp temperature filesystem sp xbacklight pulseaudio sp  eth wlan battery sp date
+modules-right = memory cpu sp pulseaudio sp  eth wlan date
 
 tray-position = right
 tray-padding = 2

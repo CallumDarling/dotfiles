@@ -17,10 +17,12 @@ exec --no-startup-id nm-applet
 exec --no-startup-id dunst
 
 #hide_edge_borders both
-for_window [class="^.*"] border pixel1 
-#gaps 
-gaps inner 0 #20 
-gaps outer 0 #5
+for_window [class="^.*"] border pixel 0 
+#gaps
+set $gapy 4
+
+gaps inner $gapy #20 
+gaps outer -$gapy #5
 
 bindsym $mod+o	gaps outer current plus 5
 bindsym $mod+p	gaps outer current minus 5
