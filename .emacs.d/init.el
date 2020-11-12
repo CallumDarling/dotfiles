@@ -13,6 +13,43 @@
 (setq package-enable-at-startup nil)
 (scroll-bar-mode -1)
 
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+(defun dashboard-insert-custom (list-size)
+  (insert "
+  _____      _ _                 _       ______                          
+ / ____|    | | |               ( )     |  ____|                         
+| |     __ _| | |_   _ _ __ ___ |/ ___  | |__   _ __ ___   __ _  ___ ___ 
+| |    / _` | | | | | | '_ ` _ \\  / __| |  __| | '_ ` _ \\ / _` |/ __/ __|
+| |___| (_| | | | |_| | | | | | | \\__ \\ | |____| | | | | | (_| | (__\\__ \ 
+ \\_____\\__,_|_|_|\\__,_|_| |_| |_| |___/ |______|_| |_| |_|\\__,_|\\___|___/ "))
+(add-to-list 'dashboard-item-generators  '(custom . dashboard-insert-custom))
+(add-to-list 'dashboard-items '(custom))
+
+
+;; Set the title
+;;(setq dashboard-banner-logo-title )
+
+(defcustom centaur-logo (expand-file-name
+                         "cemacs.txt"
+                         user-emacs-directory)
+  "Set Centaur logo. nil means official logo."
+  :type 'string)
+
+
+(setq dashboard-startup-banner 'nil)
+;; Value can be
+;; 'official which displays the official emacs logo
+;; 'logo which displays an alternative emacs logo
+;; 1, 2 or 3 which displays one of the text banners
+;; "path/to/your/image.png" or "path/to/your/text.txt" which displays whatever image/text you would prefer
+
+;; Centre content
+(setq dashboard-center-content t)
+
 (load-theme 'material t)
 
 (column-number-mode)
@@ -81,12 +118,20 @@
 
 (setq org-latex-packages-alist '(("margin=2cm" "geometry" nil)))
 
+
+;;(setq org-fontify-whole-heading-line t)
+
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (setq org-babel-default-header-args
       (cons '(:tangle . "yes")
             (assq-delete-all :tangle org-babel-default-header-args)))
+
+(use-package backline
+  :ensure t
+  :after outline
+  :config (advice-add 'outline-flag-region :after 'backline-update))
 
 (defun my-org-scrot ()
   "Take a screenshot into a time stamped unique-named file in the
@@ -122,7 +167,7 @@ same directory as the org-buffer and insert a link to this file."
 (global-set-key [C-backspace] 'fix-bkw)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
+ ;; custom-set-variables  was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
