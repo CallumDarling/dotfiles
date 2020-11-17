@@ -111,6 +111,27 @@
   :ensure t 
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(use-package projectile
+  :ensure t
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/Projects/")
+    (setq projectile-project-search-path '("~/Projects/")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :ensure t
+  :config (counsel-projectile-mode))
+
+(use-package magit
+  :ensure t
+  )
+
 (use-package org-bullets
   :ensure t
   :config
@@ -172,7 +193,7 @@ same directory as the org-buffer and insert a link to this file."
  ;; If there is more than one, they won't work right.
  '(ivy-mode t)
  '(package-selected-packages
-   '(evil ivy-rich rainbow-delimiters doom-modeline ivy org-bullets which-key use-package try))
+   '(ivy-rich rainbow-delimiters doom-modeline ivy org-bullets which-key use-package try))
  '(safe-local-variable-values
    '((eval add-hook 'after-save-hook
 	   (lambda nil
@@ -185,19 +206,23 @@ same directory as the org-buffer and insert a link to this file."
  ;; If there is more than one, they won't work right.
  )
 
-(general-define-key
-"C-M-j" 'counsel-switch-buffer)
-
 (use-package general
+  :ensure t
   :config
   (general-create-definer cmacs/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
-
   (cmacs/leader-keys
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
+
+(general-define-key
+"C-M-j" 'counsel-switch-buffer
+"<escape>" 'keyboard-escape-quit)
+
+;;Make ESC quit prompts
+;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (use-package evil
   :ensure t
@@ -217,9 +242,30 @@ same directory as the org-buffer and insert a link to this file."
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
+ 
+(use-package evil-collection
+  :ensure t
+  :after evil
+  :config
+  (evil-collection-init))
 
-;;Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
+(use-package evil-magit
+  :ensure t
+  :after magit)
 ;;Switch Buffer
 ;;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+
+(use-package hydra
+  :ensure t)
+
+(defhydra hydra-buffer-swap (:timeout 4)
+  "Swap Buffer"
+  ("h" next-buffer "next")
+  ("l" previous-buffer "prev")
+  ("f" nil "finished" :exit t))
+
+(cmacs/leader-keys
+  "c" '(counsel-switch-buffer :which-key "search buffers")
+  "b"  '(:ignore t :which-key "buffer")
+  "bb" '(counsel-switch-buffer :which-key "search buffers")
+  "bn" '(hydra-buffer-swap/body :which-key "cycle buffers"))

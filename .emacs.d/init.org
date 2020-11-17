@@ -152,6 +152,40 @@ Emacs Config File
   :hook (prog-mode . rainbow-delimiters-mode))
 #+END_SRC
 
+* Projectile
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/Projects/")
+    (setq projectile-project-search-path '("~/Projects/")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :ensure t
+  :config (counsel-projectile-mode))
+
+
+
+#+END_SRC
+
+* Magit
+:custom
+(magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+BEGIN_SRC emacs-lisp
+
+(use-package magit
+  :ensure t
+  )
+
+
+#+END_SRC
 
 * Org
 ** Org bullets
@@ -257,24 +291,31 @@ same directory as the org-buffer and insert a link to this file."
 # End:
 
 * Keybindings
-
+** General Binding and Leader Key
 
 #+BEGIN_SRC emacs-lisp
-
-(general-define-key
-"C-M-j" 'counsel-switch-buffer)
-
 (use-package general
+  :ensure t
   :config
   (general-create-definer cmacs/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
-
   (cmacs/leader-keys
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
+(general-define-key
+"C-M-j" 'counsel-switch-buffer
+"<escape>" 'keyboard-escape-quit)
+
+;;Make ESC quit prompts
+;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+#+END_SRC
+
+** Evil Mode
+
+#+BEGIN_SRC emacs-lisp
 (use-package evil
   :ensure t
   :init
@@ -293,12 +334,36 @@ same directory as the org-buffer and insert a link to this file."
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
+ 
+(use-package evil-collection
+  :ensure t
+  :after evil
+  :config
+  (evil-collection-init))
 
-;;Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
+(use-package evil-magit
+  :ensure t
+  :after magit)
 ;;Switch Buffer
 ;;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
-
-
 #+END_SRC
+
+** Hydra
+
+#+BEGIN_SRC emacs-lisp
+(use-package hydra
+  :ensure t)
+
+(defhydra hydra-buffer-swap (:timeout 4)
+  "Swap Buffer"
+  ("h" next-buffer "next")
+  ("l" previous-buffer "prev")
+  ("f" nil "finished" :exit t))
+
+(cmacs/leader-keys
+  "c" '(counsel-switch-buffer :which-key "search buffers")
+  "b"  '(:ignore t :which-key "buffer")
+  "bb" '(counsel-switch-buffer :which-key "search buffers")
+  "bn" '(hydra-buffer-swap/body :which-key "cycle buffers"))
+#+END_SRC
+
