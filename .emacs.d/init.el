@@ -24,7 +24,7 @@
  / ____|    | | |               ( )     |  ____|                         
 | |     __ _| | |_   _ _ __ ___ |/ ___  | |__   _ __ ___   __ _  ___ ___ 
 | |    / _` | | | | | | '_ ` _ \\  / __| |  __| | '_ ` _ \\ / _` |/ __/ __|
-| |___| (_| | | | |_| | | | | | | \\__ \\ | |____| | | | | | (_| | (__\\__ \ 
+| |___| (_| | | | |_| | | | | | | \\__ \\ | |____| | | | | | (_| | (__\\__ \\ 
  \\_____\\__,_|_|_|\\__,_|_| |_| |_| |___/ |______|_| |_| |_|\\__,_|\\___|___/ "))
 (add-to-list 'dashboard-item-generators  '(custom . dashboard-insert-custom))
 (add-to-list 'dashboard-items '(custom))
@@ -121,8 +121,7 @@
 
 ;;(setq org-fontify-whole-heading-line t)
 
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
 
 (setq org-babel-default-header-args
       (cons '(:tangle . "yes")
@@ -173,10 +172,54 @@ same directory as the org-buffer and insert a link to this file."
  ;; If there is more than one, they won't work right.
  '(ivy-mode t)
  '(package-selected-packages
-   '(ivy-rich rainbow-delimiters doom-modeline ivy org-bullets which-key use-package try)))
+   '(evil ivy-rich rainbow-delimiters doom-modeline ivy org-bullets which-key use-package try))
+ '(safe-local-variable-values
+   '((eval add-hook 'after-save-hook
+	   (lambda nil
+	     (org-babel-tangle))
+	   nil t))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(general-define-key
+"C-M-j" 'counsel-switch-buffer)
+
+(use-package general
+  :config
+  (general-create-definer cmacs/leader-keys
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+
+  (cmacs/leader-keys
+    "t"  '(:ignore t :which-key "toggles")
+    "tt" '(counsel-load-theme :which-key "choose theme")))
+
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  :config
+  (evil-mode 1)
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+
+  ;; Use visual line motions even outside of visual-line-mode buffers
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+
+;;Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;;Switch Buffer
+;;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
