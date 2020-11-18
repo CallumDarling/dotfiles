@@ -12,6 +12,10 @@
 (setq inhibit-startup-message t)
 (setq package-enable-at-startup nil)
 (scroll-bar-mode -1)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(set-fringe-mode 10)
+(menu-bar-mode -1)
 
 (use-package dashboard
   :ensure t
@@ -50,7 +54,18 @@
 ;; Centre content
 (setq dashboard-center-content t)
 
-(load-theme 'material t)
+;;(load-theme 'material t)
+
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-oceanic-next t)
+
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
 
 (column-number-mode)
 
@@ -132,10 +147,25 @@
   :ensure t
   )
 
+(use-package lsp-mode
+:commands (lsp lsp-deferred)
+:hook (lsp-mode . efs/lsp-mode-setup)
+:init
+(setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+:config
+(lsp-enable-which-key-integration t))
+
+(use-package org
+  :ensure t
+  :config
+  (setq org-ellipsis "▾"))
+
 (use-package org-bullets
   :ensure t
   :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (setq org-latex-packages-alist '(("margin=2cm" "geometry" nil)))
 
@@ -148,10 +178,20 @@
       (cons '(:tangle . "yes")
             (assq-delete-all :tangle org-babel-default-header-args)))
 
-(use-package backline
-  :ensure t
-  :after outline
-  :config (advice-add 'outline-flag-region :after 'backline-update))
+;;(use-package backline
+;;  :ensure t
+;;  :after outline
+;;  :config (advice-add 'outline-flag-region :after 'backline-update))
+
+(require 'org-tempo)
+
+(add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("sc" . "src scheme"))
+(add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+(add-to-list 'org-structure-template-alist '("json" . "src json"))
 
 (defun my-org-scrot ()
   "Take a screenshot into a time stamped unique-named file in the
