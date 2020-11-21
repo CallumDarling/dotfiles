@@ -112,6 +112,21 @@ Emacs Config File
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 17)))
 #+END_SRC
+** proper Syntax highlighting 
+   #+begin_src emacs-lisp
+   ;; C-Like
+(dolist (mode-iter '(c-mode c++-mode glsl-mode java-mode javascript-mode rust-mode))
+  (font-lock-add-keywords
+    mode-iter
+    '(("\\([~^&\|!<>=,.\\+*/%-]\\)" 0 'font-lock-operator-face keep)))
+  (font-lock-add-keywords
+    mode-iter
+    '(("\\([\]\[}{)(:;]\\)" 0 'font-lock-delimit-face keep)))
+  ;; functions
+  (font-lock-add-keywords
+    mode-iter
+    '(("\\([_a-zA-Z][_a-zA-Z0-9]*\\)\s*(" 1 'font-lock-function-name-face keep))))
+    #+end_src
 * General Packages
 ** Ivy and Counsel
 #+BEGIN_SRC emacs-lisp
@@ -134,6 +149,8 @@ Emacs Config File
          ("C-d" . ivy-reverse-i-search-kill))
   :config
   (ivy-mode 1))
+
+(setq ivy-initial-inputs-alist ())
 
 
 (use-package counsel
@@ -204,8 +221,20 @@ Emacs Config File
 #+END_SRC
 
 * LSP Mode
+  
+** Breadcrumb
+
+  #+begin_src emacs-lisp
+  (defun efs/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
+  #+end_src
+
+** LSP mode
+
   #+begin_src emacs-lisp
   (use-package lsp-mode
+  :ensure t
   :commands (lsp lsp-deferred)
   :hook (lsp-mode . efs/lsp-mode-setup)
   :init
@@ -213,6 +242,66 @@ Emacs Config File
   :config
   (lsp-enable-which-key-integration t))
   #+end_src
+
+** Languages
+
+*** Typescript
+
+  #+begin_src emacs-lisp
+  (use-package typescript-mode
+  :ensure t
+  :mode "\\.ts\\'"
+  :hook (typescript-mode . lsp-deferred)
+  :config
+  (setq typescript-indent-level 2))
+  #+end_src
+  
+** Language hooks
+
+  #+begin_src emacs-lisp
+  (add-hook 'c-mode-hook 'lsp)
+  (add-hook 'cpp-mode-hook 'lsp)
+  #+end_src
+
+** Company
+
+  #+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :bind (:map company-active-map
+         ("<tab>" . company-complete-selection))
+        (:map lsp-mode-map
+         ("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idle-delay 0.0))
+
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode))
+  #+end_src
+  
+** LSP UI
+
+   #+begin_src emacs-lisp
+  (use-package lsp-ui
+ :ensure t
+   :hook (lsp-mode . lsp-ui-mode)
+   :bind (("<f12>" . lsp-ui-doc-glance)))
+
+  (setq lsp-ui-doc-position 'bottom)
+  (setq lsp-ui-doc-max-height 50)
+  (setq lsp-ui-doc-max-width 250)
+   #+end_src
+
+*** LSP Treemacs
+    #+begin_src emacs-lisp
+    (use-package lsp-treemacs
+    :ensure t
+   :after lsp)
+    #+end_src
 
 * Org
 ** Basics
@@ -269,7 +358,6 @@ Emacs Config File
 (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
 (add-to-list 'org-structure-template-alist '("json" . "src json"))
 #+END_SRC
-
 * Custom Functions
 
 ** Add Screenshots to Org Files
@@ -341,9 +429,9 @@ same directory as the org-buffer and insert a link to this file."
 # eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
 # End:
 
-* Keybindings
+* Keybindings (Evil)
 ** General Binding and Leader Key
-
+   
 #+BEGIN_SRC emacs-lisp
 (use-package general
   :ensure t
@@ -355,6 +443,7 @@ same directory as the org-buffer and insert a link to this file."
   (cmacs/leader-keys
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
+    
 
 (general-define-key
 "C-M-j" 'counsel-switch-buffer
@@ -399,7 +488,23 @@ same directory as the org-buffer and insert a link to this file."
 ;;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
 #+END_SRC
 
-** Hydra
+** Evil easymotion
+
+   #+begin_src emacs-lisp
+   (use-package evil-easymotion
+   :ensure t)
+   
+;;(with-eval-after-load "evil-easymotion"
+(general-define-key
+     :states '(normal insert visual)
+     
+     "H-l" '(:keymap evilem-map :package evil-easymotion))
+ 
+;;(evilem-default-keybindings "H-l")    
+   
+   #+end_src
+
+* Hydra
 
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
@@ -410,14 +515,107 @@ same directory as the org-buffer and insert a link to this file."
   ("h" next-buffer "next")
   ("l" previous-buffer "prev")
   ("f" nil "finished" :exit t))
+#+END_SRC
 
+** Window and Buffer Hydras
+
+https://gist.github.com/darrylhebbes/a783080ba5fd288dc26c
+Nice Hydras for window buffer manipulation, only really needed to switch window fast bit it'll do
+
+#+begin_src emacs-lisp
+    (defhydra hydra-buffers (:color blue :hint nil)
+              "
+                                                                       ╭─────────┐
+     Move to Window         Switch                  Do                 │ Buffers │
+  ╭────────────────────────────────────────────────────────────────────┴─────────╯
+           ^_k_^          [_b_] switch (ido)       [_d_] kill the buffer
+           ^^↑^^          [_i_] ibuffer            [_r_] toggle read-only mode
+       _h_ ←   → _l_      [_a_] alternate          [_u_] revert buffer changes
+           ^^↓^^          [_s_] switch (helm)      [_w_] save buffer
+           ^_j_^
+  --------------------------------------------------------------------------------
+              "
+              ("<tab>" hydra-master/body "back")
+              ("<ESC>" nil "quit")
+              ("a" joe-alternate-buffers)
+              ("b" ido-switch-buffer)
+              ("d" joe-kill-this-buffer)
+              ("i" ibuffer)
+              ("h" buf-move-left  :color red)
+              ("k" buf-move-up    :color red)
+              ("j" buf-move-down  :color red)
+              ("l" buf-move-right :color red)
+              ("r" read-only-mode)
+              ("s" helm-buffers-list)
+              ("u" joe-revert-buffer)
+              ("w" save-buffer))
+
+    (defhydra hydra-window (:color blue :hint nil)
+            "
+                                                                       ╭─────────┐
+     Move to      Size    Scroll        Split                    Do    │ Windows │
+  ╭────────────────────────────────────────────────────────────────────┴─────────╯
+        ^_k_^           ^_K_^       ^_p_^    ╭─┬─┐^ ^        ╭─┬─┐^ ^         ↺ [_u_] undo layout
+        ^^↑^^           ^^↑^^       ^^↑^^    │ │ │_v_ertical ├─┼─┤_b_alance   ↻ [_r_] restore layout
+    _h_ ←   → _l_   _H_ ←   → _L_   ^^ ^^    ╰─┴─╯^ ^        ╰─┴─╯^ ^         ✗ [_d_] close window
+        ^^↓^^           ^^↓^^       ^^↓^^    ╭───┐^ ^        ╭───┐^ ^         ⇋ [_w_] cycle window
+        ^_j_^           ^_J_^       ^_n_^    ├───┤_s_tack    │   │_z_oom
+        ^^ ^^           ^^ ^^       ^^ ^^    ╰───╯^ ^        ╰───╯^ ^       
+  --------------------------------------------------------------------------------
+            "
+            ("<tab>" hydra-master/body "back")
+            ("<ESC>" nil "quit")
+            ("n" joe-scroll-other-window :color red)
+            ("p" joe-scroll-other-window-down :color red)
+            ("b" balance-windows)
+            ("d" delete-window)
+            ("H" shrink-window-horizontally :color red)
+            ("h" windmove-left :color red)
+            ("J" shrink-window :color red)
+            ("j" windmove-down :color red)
+            ("K" enlarge-window :color red)
+            ("k" windmove-up :color red)
+            ("L" enlarge-window-horizontally :color red)
+            ("l" windmove-right :color red)
+            ("r" winner-redo :color red)
+            ("s" split-window-vertically :color red)
+            ("u" winner-undo :color red)
+            ("v" split-window-horizontally :color red)
+            ("w" other-window)
+            ("z" delete-other-windows))
+
+#+end_src
+
+
+Going to a simpler version for window fiddling
+
+#+begin_src emacs-lisp
+ (defhydra hydra-simple-window (:color blue :hint nil)
+"      ^ 
+<-(h) |(j) |(k) ->(l) Move Rapidly Between Windows (Press A for advanced window mode)
+           v"
+
+            ("A" hydra-window/body :color red)
+            ("h" windmove-left :color red)
+            ("j" windmove-down :color red)
+            ("k" windmove-up :color red)
+            ("l" windmove-right :color red)
+            ("<left>" windmove-left :color red)
+            ("<down>" windmove-down :color red)
+            ("<up>" windmove-up :color red)
+            ("<right>" windmove-right :color red)
+            
+ )
+#+end_src
+
+** Add hydras to leader key
+#+begin_src emacs-lisp
 (cmacs/leader-keys
   "c" '(counsel-switch-buffer :which-key "search buffers")
   "b"  '(:ignore t :which-key "buffer")
   "bb" '(counsel-switch-buffer :which-key "search buffers")
-  "bn" '(hydra-buffer-swap/body :which-key "cycle buffers"))
-#+END_SRC
+  "bn" '(hydra-buffer-swap/body :which-key "cycle buffers")
+  "v" '(hydra-simple-window/body :which-key "cycle windows")
+  )
 
-
-
-
+#+end_src
