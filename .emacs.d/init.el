@@ -17,6 +17,9 @@
 (set-fringe-mode 10)
 (menu-bar-mode -1)
 
+;; set save directory to central folder
+(setq backup-directory-alist `(("." . "~/.emacs.d/saves")))
+
 (use-package dashboard
   :ensure t
   :config
@@ -96,6 +99,8 @@
   (font-lock-add-keywords
     mode-iter
     '(("\\([_a-zA-Z][_a-zA-Z0-9]*\\)\s*(" 1 'font-lock-function-name-face keep))))
+
+(setq-default tab-width 4)
 
 (use-package ivy
   :ensure t
@@ -251,6 +256,7 @@
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
 (add-to-list 'org-structure-template-alist '("json" . "src json"))
+(add-to-list 'org-structure-template-alist '("cpp" . "src cpp"))
 
 (defun my-org-scrot ()
   "Take a screenshot into a time stamped unique-named file in the
@@ -286,18 +292,19 @@ same directory as the org-buffer and insert a link to this file."
 (global-set-key [C-backspace] 'fix-bkw)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
+ ;; custom-set-variables  was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ivy-mode t)
  '(package-selected-packages
-   '(evil-easymotion ivy-rich rainbow-delimiters doom-modeline ivy org-bullets which-key use-package try)))
+   '(ivy-rich rainbow-delimiters doom-modeline ivy org-bullets which-key use-package try)))
 (custom-set-faces
+
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+ ;; If there is more than one, they won't work right. dsadcsa
  )
 
 (use-package general
@@ -309,12 +316,13 @@ same directory as the org-buffer and insert a link to this file."
     :global-prefix "C-SPC")
   (cmacs/leader-keys
     "t"  '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")))
+    "tt" '(counsel-load-theme :which-key "choose theme")
+    "SPC" '(evil-avy-goto-word-1 :which-key "Jump to word")))
     
-
 (general-define-key
 "C-M-j" 'counsel-switch-buffer
-"<escape>" 'keyboard-escape-quit)
+"<escape>" 'keyboard-escape-quit
+"H-c" 'compile)
 
 ;;Make ESC quit prompts
 ;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -349,6 +357,16 @@ same directory as the org-buffer and insert a link to this file."
   :after magit)
 ;;Switch Buffer
 ;;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+
+(use-package evil-easymotion
+   :ensure t)
+   
+;;(with-eval-after-load "evil-easymotion"
+(general-define-key
+     :states '(normal insert visual)
+     "H-l" '(:keymap evilem-map :package evil-easymotion))
+ 
+;;(evilem-default-keybindings "H-l")
 
 (use-package hydra
   :ensure t)

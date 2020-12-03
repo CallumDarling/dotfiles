@@ -29,6 +29,9 @@ Emacs Config File
 (tooltip-mode -1)
 (set-fringe-mode 10)
 (menu-bar-mode -1)
+
+;; set save directory to central folder
+(setq backup-directory-alist `(("." . "~/.emacs.d/saves")))
 #+END_SRC
 ** Dashboard
 *** Install
@@ -127,6 +130,12 @@ Emacs Config File
     mode-iter
     '(("\\([_a-zA-Z][_a-zA-Z0-9]*\\)\s*(" 1 'font-lock-function-name-face keep))))
     #+end_src
+** Tab = 4
+
+   #+begin_src emacs-lisp
+   (setq-default tab-width 4)
+   #+end_src
+
 * General Packages
 ** Ivy and Counsel
 #+BEGIN_SRC emacs-lisp
@@ -210,7 +219,7 @@ Emacs Config File
 
 * Magit
 :custom
-(magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+((magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 #+BEGIN_SRC emacs-lisp
 
 (use-package magit
@@ -357,6 +366,7 @@ Emacs Config File
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
 (add-to-list 'org-structure-template-alist '("json" . "src json"))
+(add-to-list 'org-structure-template-alist '("cpp" . "src cpp"))
 #+END_SRC
 * Custom Functions
 
@@ -424,11 +434,6 @@ same directory as the org-buffer and insert a link to this file."
  )
 #+END_SRC
 
-* Local Variables
-# Local Variables:
-# eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
-# End:
-
 * Keybindings (Evil)
 ** General Binding and Leader Key
    
@@ -442,16 +447,21 @@ same directory as the org-buffer and insert a link to this file."
     :global-prefix "C-SPC")
   (cmacs/leader-keys
     "t"  '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")))
+    "tt" '(counsel-load-theme :which-key "choose theme")
+    "SPC" '(evil-avy-goto-word-1 :which-key "Jump to word")))
     
-
 (general-define-key
 "C-M-j" 'counsel-switch-buffer
-"<escape>" 'keyboard-escape-quit)
+"<escape>" 'keyboard-escape-quit
+"H-c" 'compile)
 
 ;;Make ESC quit prompts
 ;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 #+END_SRC
+
+Jump to line then to word in that line
+"SPC" '( lambda () (interactive) (evil-avy-goto-line) (evilem-motion-forward-word-begin)) :which-key "Jump to word"))
+
 
 ** Evil Mode
 
@@ -497,7 +507,6 @@ same directory as the org-buffer and insert a link to this file."
 ;;(with-eval-after-load "evil-easymotion"
 (general-define-key
      :states '(normal insert visual)
-     
      "H-l" '(:keymap evilem-map :package evil-easymotion))
  
 ;;(evilem-default-keybindings "H-l")    
@@ -516,7 +525,6 @@ same directory as the org-buffer and insert a link to this file."
   ("l" previous-buffer "prev")
   ("f" nil "finished" :exit t))
 #+END_SRC
-
 ** Window and Buffer Hydras
 
 https://gist.github.com/darrylhebbes/a783080ba5fd288dc26c
@@ -619,3 +627,8 @@ Going to a simpler version for window fiddling
   )
 
 #+end_src
+* Local Variables
+# Local Variables:
+# eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
+# End:
+
