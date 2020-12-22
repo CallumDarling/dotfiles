@@ -146,6 +146,11 @@
   :ensure t 
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(use-package ace-window
+  :ensure t)
+
+(global-set-key (kbd "H-<return>") 'ace-window)
+
 (use-package projectile
   :ensure t
   :diminish projectile-mode
@@ -187,8 +192,38 @@
 :config
 (setq typescript-indent-level 2))
 
-(add-hook 'c-mode-hook 'lsp)
-(add-hook 'cpp-mode-hook 'lsp)
+(use-package glsl-mode
+:ensure t)
+
+(use-package scala-mode
+  :ensure t
+  :interpreter
+    ("scala" . scala-mode))
+
+;; Enable sbt mode for executing sbt commands
+(use-package sbt-mode
+  :ensure t
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+   (setq sbt:program-options '("-Dsbt.supershell=false"))
+)
+
+;; Enable nice rendering of diagnostics like compile errors.
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+;; Add metals backend for lsp-mode
+(use-package lsp-metals
+  :ensure t
+  :config (setq lsp-metals-treeview-show-when-views-received t))
 
 (use-package company
   :ensure t
@@ -216,8 +251,19 @@
  (setq lsp-ui-doc-max-width 250)
 
 (use-package lsp-treemacs
- :ensure t
-:after lsp)
+    :ensure t
+   :after lsp)
+   
+    (use-package treemacs-evil
+	:ensure t)
+
+	
+(setq treemacs-width 25
+      treemacs-lock-width nil)
+
+(which-key-mode)
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c++-mode-hook 'lsp)
 
 (use-package org
   :ensure t
@@ -307,6 +353,7 @@ same directory as the org-buffer and insert a link to this file."
  ;; If there is more than one, they won't work right. dsadcsa
  )
 
+(setq evil-want-keybinding nil)
 (use-package general
   :ensure t
   :config
@@ -322,7 +369,12 @@ same directory as the org-buffer and insert a link to this file."
 (general-define-key
 "C-M-j" 'counsel-switch-buffer
 "<escape>" 'keyboard-escape-quit
-"H-c" 'compile)
+"H-x" 'compile
+"H-c" 'recompile
+"H-<tab>" 'hs-show-block
+"H-q" 'hs-hide-block
+"H-w" 'hs-show-all
+"H-e" 'hs-hide-all)
 
 ;;Make ESC quit prompts
 ;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
